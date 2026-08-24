@@ -1,0 +1,18 @@
+# Dependencias
+node_modules/
+
+# Secretos y entorno
+.env
+.env.example
+.venv
+
+# Base de datos SQLite (incluye WAL/SHM: contienen datos reales)
+kohi.db
+kohi.db-shm
+kohi.db-wal
+database/
+
+# Artefactos locales de herramientas
+.playwright-mcp/
+.claude/settings.local.json
+*.bak
