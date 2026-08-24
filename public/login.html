@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Entrar — Kōhi</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="index.html">Kōhi</a>
+      <span class="kanji">珈琲</span>
+    </header>
+
+    <main class="center-stage">
+      <section class="card">
+        <p class="eyebrow">Acceso</p>
+        <h1 class="card__title">Bienvenido de nuevo</h1>
+        <p class="card__intro">Entra para ver tu posición en la lista de espera.</p>
+
+        <p class="message" id="message" role="alert" hidden></p>
+
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="email" placeholder="tu@email.com" required />
+          </div>
+
+          <div class="field">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" placeholder="••••••••" required />
+          </div>
+
+          <button class="btn btn--primary btn--block" type="submit" id="submitBtn">Entrar</button>
+        </form>
+
+        <p class="card__foot">
+          ¿Todavía no estás en la lista? <a href="register.html">Únete aquí</a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">Kōhi · Lista de espera abierta</footer>
+
+    <script src="app.js"></script>
+    <script>
+      const form = document.getElementById('loginForm');
+      const message = document.getElementById('message');
+      const submitBtn = document.getElementById('submitBtn');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        clearFlash(message);
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!email || !password) {
+          flash(message, 'Escribe tu email y tu contraseña.');
+          return;
+        }
+
+        busy(submitBtn, true, 'Entrar');
+        const { ok, data } = await api('/api/login', {
+          method: 'POST',
+          body: { email, password },
+        });
+        busy(submitBtn, false, 'Entrar');
+
+        if (!ok) {
+          flash(message, data.error || 'No hemos podido iniciar sesión.');
+          return;
+        }
+
+        auth.set(data.token);
+        flash(message, 'Sesión iniciada. Abriendo tu panel…', 'success');
+        window.location.href = 'dashboard.html';
+      });
+    </script>
+  </body>
+</html>
